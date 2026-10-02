@@ -2,348 +2,348 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Cyber Evidence Chain | Blockchain Forensics</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Evidence Chain</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Share Tech Mono', monospace;
-    max-width: 950px;
-    margin: 0 auto;
-    background: #02040a;
-    color: #7fdfff;
-    padding: 0 15px 40px;
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  /* --- Binary rain background --- */
-  #binaryCanvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: -1;
-    opacity: 0.14;
-  }
-
-  /* --- Header with scanning eye --- */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-    padding: 35px 0 20px;
-    border-bottom: 1px solid #00eaff33;
-  }
-  .eye-icon {
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    border: 2px solid #00eaff;
-    box-shadow: 0 0 15px #00eaffaa, inset 0 0 10px #00eaff77;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    animation: pulseEye 2.5s ease-in-out infinite;
-  }
-  .eye-icon::before {
-    content: "";
-    width: 14px; height: 14px;
-    background: #00eaff;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #00eaff;
-  }
-  @keyframes pulseEye {
-    0%, 100% { box-shadow: 0 0 15px #00eaffaa, inset 0 0 10px #00eaff77; }
-    50% { box-shadow: 0 0 30px #ff00c8aa, inset 0 0 15px #ff00c877; border-color: #ff00c8; }
-  }
-  h1 {
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 900;
-    font-size: 24px;
-    color: #00eaff;
-    text-shadow: 0 0 10px #00eaff, 0 0 25px #00eaff55;
-    letter-spacing: 3px;
-    margin: 0;
-    text-align: center;
-  }
-  .subtitle {
-    text-align: center;
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: #ff00c8;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  /* --- Network status bar --- */
-  .status-bar {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    font-size: 11px;
-    padding: 12px 0;
-    color: #7fdfff99;
-    letter-spacing: 1px;
-    flex-wrap: wrap;
-  }
-  .status-bar span::before {
-    content: "●";
-    color: #00ff9a;
-    margin-right: 5px;
-    text-shadow: 0 0 6px #00ff9a;
-  }
-
-  h2 {
-    font-family: 'Orbitron', sans-serif;
-    color: #00eaff;
-    font-size: 14px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    border-bottom: 1px solid #00eaff33;
-    padding-bottom: 8px;
-  }
-
-  section {
-    background: linear-gradient(180deg, #071322cc, #030a12cc);
-    border: 1px solid #00eaff33;
-    box-shadow: 0 0 20px #00eaff11, inset 0 0 25px #00eaff08;
-    padding: 22px;
-    border-radius: 6px;
-    margin-bottom: 28px;
-    position: relative;
-    backdrop-filter: blur(2px);
-  }
-  section::before, section::after {
-    content: "";
-    position: absolute;
-    width: 16px; height: 16px;
-  }
-  section::before { top: -1px; left: -1px; border-top: 2px solid #00eaff; border-left: 2px solid #00eaff; }
-  section::after { bottom: -1px; right: -1px; border-bottom: 2px solid #ff00c8; border-right: 2px solid #ff00c8; }
-
-  input, textarea, button {
-    display: block;
-    width: 100%;
-    margin: 10px 0;
-    padding: 11px;
-    border-radius: 3px;
-    border: 1px solid #00eaff44;
-    background: #010509;
-    color: #7fdfff;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-  }
-  input:focus, textarea:focus {
-    outline: none;
-    border-color: #00eaff;
-    box-shadow: 0 0 10px #00eaff55;
-  }
-  button {
-    background: linear-gradient(90deg, #00eaff22, #ff00c822);
-    color: #00eaff;
-    font-weight: bold;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border: 1px solid #00eaff88;
-  }
-  button:hover {
-    background: linear-gradient(90deg, #00eaff, #ff00c8);
-    color: #001018;
-    box-shadow: 0 0 20px #00eaff88;
-  }
-
-  .result {
-    margin-top: 12px;
-    padding: 14px;
-    border-radius: 3px;
-    font-size: 12px;
-    border: 1px solid;
-    word-break: break-all;
-  }
-  .verified { background: #00ff9a11; border-color: #00ff9a; color: #00ff9a; text-shadow: 0 0 6px #00ff9a77; }
-  .tampered { background: #ff003c11; border-color: #ff003c; color: #ff5577; text-shadow: 0 0 6px #ff003c77; }
-
-  /* --- Blockchain hexagon log --- */
-  #chainLog { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
-  .block-node {
-    position: relative;
-    width: 90%;
-    max-width: 600px;
-    background: linear-gradient(135deg, #061826, #030d18);
-    border: 1px solid #00eaff66;
-    clip-path: polygon(4% 0, 96% 0, 100% 15%, 100% 85%, 96% 100%, 4% 100%, 0 85%, 0 15%);
-    padding: 16px 22px;
-    margin-bottom: 4px;
-    font-size: 11px;
-    box-shadow: 0 0 15px #00eaff22;
-  }
-  .block-node .block-id {
-    font-family: 'Orbitron', sans-serif;
-    color: #ff00c8;
-    font-size: 12px;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-    text-shadow: 0 0 8px #ff00c877;
-  }
-  .block-node div { margin: 3px 0; word-break: break-all; color: #7fdfffcc; }
-  .block-node b { color: #00eaff; }
-  .chain-link {
-    width: 2px;
-    height: 26px;
-    background: linear-gradient(180deg, #00eaff, #ff00c8);
-    box-shadow: 0 0 8px #00eaffaa;
-    margin: -2px 0;
-  }
-  .empty-log { color: #7fdfff66; text-align: center; padding: 20px; font-size: 12px; letter-spacing: 1px; }
+:root{--bg:#eef0fb;--ink:#14142b;--mute:#666a8c;--pri:#5b5bf0;--pri2:#8b8cf7;--glass:rgba(255,255,255,.66);--line:rgba(110,112,200,.22);--navy:#12122b;--ok:#0d8a5f;--warn:#b06e00;--bad:#d6304f}
+*{box-sizing:border-box}
+body{margin:0;font-family:Manrope,system-ui,sans-serif;color:var(--ink);line-height:1.5;
+background:radial-gradient(900px 520px at 88% -8%,#c6c6fb,transparent 62%),radial-gradient(700px 480px at -8% 32%,#dde2fa,transparent 60%),var(--bg)}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 18px 60px}
+:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:18px;display:flex;align-items:center;gap:10px}
+.dot{width:26px;height:26px;border-radius:9px;background:linear-gradient(135deg,var(--pri),var(--pri2))}
+.pill{background:var(--glass);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:600}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.1;letter-spacing:-.02em;font-weight:800;margin:30px 0 6px}
+.sub{color:var(--mute);margin:0 0 24px;font-size:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:8px 0 24px}
+.stat{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:16px 18px;backdrop-filter:blur(8px)}
+.stat b{display:block;font-size:30px;font-weight:800}.stat span{color:var(--mute);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:26px;padding:24px;backdrop-filter:blur(10px);box-shadow:0 10px 34px rgba(91,91,240,.08)}
+.card.dark{background:linear-gradient(160deg,#1a1a3d,var(--navy));color:#e9e9ff;border-color:#2b2b58}
+.card.dark .mute{color:#a9abd6}
+.card.wide{grid-column:1/-1}
+h2{font-size:20px;margin:0 0 4px;font-weight:800}
+.mute{color:var(--mute);font-size:14px;margin:0 0 14px}
+input,textarea,select,button{width:100%;font:inherit;font-size:14px;padding:11px 14px;margin:6px 0;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.9);color:var(--ink)}
+.dark input{background:rgba(255,255,255,.08);border-color:#3a3a70;color:#fff}
+button{background:var(--pri);color:#fff;border:0;font-weight:700;cursor:pointer}
+button:hover{background:#4a4ae0}button:disabled{opacity:.5;cursor:not-allowed}
+button.ghost{background:transparent;color:var(--pri);border:1px solid var(--pri)}
+.dark button.ghost{color:#c9caff;border-color:#8b8cf7}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 130px;width:auto}
+video{width:100%;max-width:300px;border-radius:18px;display:block;margin:8px 0;background:#000}
+.msg{font-size:14px;font-weight:600;margin-top:8px}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.dark .ok{color:#5be3ad}.dark .bad{color:#ff8fa5}
+.result{margin-top:10px;padding:12px 14px;border-radius:14px;font-size:13px;word-break:break-all;border:1px solid}
+.result.ok{background:#e4f7ef;border-color:#9edcc2}.result.bad{background:#fde8ec;border-color:#f1a9b7}
+.hash{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
+.caselist{list-style:none;padding:0;margin:10px 0 0;max-height:180px;overflow-y:auto}
+.caselist li{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.6);border:1px solid var(--line);margin-bottom:6px;font-size:13px}
+.caselist li b{display:block;font-size:13px}
+.blk{background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:20px;padding:18px;margin-top:12px}
+.blk h3{margin:0 0 8px;font-size:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.blk div.f{font-size:13px;margin:2px 0;word-break:break-all}.blk b{font-weight:600;color:var(--mute)}
+.chip{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:#e9e9ff;color:#3b3bc4}
+.chip.cert{background:#e4f7ef;color:var(--ok)}
+.qr{margin-top:10px}
+.qr img{width:90px;height:90px;border-radius:10px;border:1px solid var(--line);background:#fff;padding:4px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.acts>*{width:auto;flex:0 1 auto;margin:0}
+details{margin-top:10px;font-size:13px}
+summary{cursor:pointer;font-weight:700;color:var(--pri)}
+.clog{margin:8px 0 0;padding-left:16px;border-left:2px solid var(--pri2)}
+.clog p{margin:0 0 8px;font-size:13px}
+[hidden]{display:none!important}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<canvas id="binaryCanvas"></canvas>
-
-<div class="header">
-  <div class="eye-icon"></div>
-  <div>
-    <h1>CYBER EVIDENCE CHAIN</h1>
-    <div class="subtitle">Blockchain Forensics System</div>
-  </div>
+<div class="wrap">
+<div class="top">
+  <div class="brand"><span class="dot"></span>Cyber Evidence Chain</div>
+  <span class="pill" id="net">Ganache network: connected</span>
 </div>
 
-<div class="status-bar">
-  <span>GANACHE NETWORK: CONNECTED</span>
-  <span id="blockCountStatus">TOTAL BLOCKS: --</span>
+<h1>Evidence that can't be quietly changed</h1>
+<p class="sub">Create a case, register evidence on the blockchain, and verify it any time.</p>
+
+<div class="stats">
+  <div class="stat"><b id="sBlocks">–</b><span>Evidence blocks</span></div>
+  <div class="stat"><b id="sCases">–</b><span>Cases</span></div>
 </div>
 
-<section>
-  <h2>▸ Upload Evidence</h2>
-  <form id="uploadForm">
-    <input type="file" id="evidenceFile" required>
-    <textarea id="description" placeholder="Description (e.g. Case #123 - suspect laptop image)"></textarea>
-    <button type="submit">Upload &amp; Register on Blockchain</button>
-  </form>
-  <div id="uploadResult"></div>
-</section>
+<div class="grid">
 
-<section>
-  <h2>▸ Verify Evidence Integrity</h2>
-  <form id="verifyForm">
-    <input type="file" id="verifyFile" required>
-    <button type="submit">Scan &amp; Verify Against Blockchain</button>
-  </form>
-  <div id="verifyResult"></div>
-</section>
+  <!-- BLOCK 1: CASES (open to everyone) -->
+  <section class="card">
+    <h2>Cases</h2>
+    <p class="mute">Create a case, then upload evidence under it.</p>
+    <input id="caseTitle" placeholder="Case title, e.g. FIR-2026-014 Theft Investigation">
+    <button id="addCaseBtn">+ Create Case</button>
+    <p class="msg" id="caseMsg"></p>
+    <ul class="caselist" id="caseList"></ul>
+  </section>
 
-<section>
-  <h2>▸ Evidence Chain of Custody</h2>
-  <button onclick="loadEvidence()">↻ Refresh Chain</button>
-  <div id="chainLog"><div class="empty-log">No blocks loaded yet...</div></div>
-</section>
+  <!-- Officer access (only gates status update / court certify below) -->
+  <section class="card dark">
+    <h2>Officer access</h2>
+    <p class="mute">Face unlock is checked by the server. Needed only to update status or certify by court.</p>
+    <video id="video" autoplay muted playsinline hidden></video>
+    <button id="unlockBtn">Unlock with face</button>
+    <button class="ghost" id="lockBtn" hidden>Lock officer panel</button>
+    <div class="msg bad" id="officerMsg">Locked. Status/court actions are disabled.</div>
+    <div id="setup" hidden>
+      <p class="mute" style="margin-top:16px">First-time setup: enter the admin key to enroll the face.</p>
+      <input type="password" id="adminKey" placeholder="Admin key" autocomplete="off">
+      <button class="ghost" id="enrollBtn">Enroll officer face</button>
+    </div>
+  </section>
+
+  <!-- BLOCK 2: UPLOAD EVIDENCE -->
+  <section class="card">
+    <h2>Upload evidence</h2>
+    <p class="mute">The file's hash is written to the chain. The file itself is not stored on it.</p>
+    <form id="uploadForm">
+      <select id="caseSel" required><option value="">Choose a case</option></select>
+      <input type="file" id="evidenceFile" required>
+      <textarea id="description" rows="2" placeholder="Description, e.g. Suspect laptop disk image"></textarea>
+      <button type="submit">Upload and register</button>
+    </form>
+    <div id="uploadResult"></div>
+  </section>
+
+  <!-- BLOCK 3: VERIFY -->
+  <section class="card">
+    <h2>Verify a file</h2>
+    <p class="mute">Drop in any file to check it against the chain.</p>
+    <form id="verifyForm">
+      <input type="file" id="verifyFile" required>
+      <button type="submit">Check against blockchain</button>
+    </form>
+    <div id="verifyResult"></div>
+  </section>
+
+  <!-- EVIDENCE CHAIN LOG -->
+  <section class="card wide">
+    <h2>Chain of custody</h2>
+    <div class="row">
+      <select id="caseFilter"><option value="">All cases</option></select>
+      <button class="ghost" id="refreshBtn">Refresh</button>
+    </div>
+    <div id="chainLog"><p class="mute">Loading blocks…</p></div>
+  </section>
+
+</div>
+</div>
 
 <script>
-  // Binary rain background
-  const canvas = document.getElementById("binaryCanvas");
-  const ctx = canvas.getContext("2d");
-  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resize(); window.addEventListener("resize", resize);
-  const fontSize = 16;
-  let columns = Math.floor(canvas.width / fontSize);
-  let drops = Array(columns).fill(1);
-  function drawRain() {
-    ctx.fillStyle = "rgba(2,4,10,0.08)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#00eaff";
-    ctx.font = fontSize + "px monospace";
-    drops.forEach((y, i) => {
-      const text = Math.random() > 0.5 ? "1" : "0";
-      ctx.fillText(text, i * fontSize, y * fontSize);
-      if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
-    });
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const STATUSES = ["Registered", "UnderReview", "CourtCertified", "Archived"];
+let token = null, cases = [], records = [], camOn = false, modelsOn = false;
+
+async function api(url, opt = {}) {
+  opt.headers = { ...(opt.headers || {}) };
+  if (token) opt.headers.Authorization = "Bearer " + token;
+  const res = await fetch(url, opt);
+  const ct = res.headers.get("content-type") || "";
+  if (!ct.includes("json")) throw new Error(`Server route ${url} failed (HTTP ${res.status}).`);
+  return res.json();
+}
+const post = (url, body, headers = {}) =>
+  api(url, { method: "POST", headers: { "Content-Type": "application/json", ...headers }, body: JSON.stringify(body) });
+
+// ---------- Officer face unlock ----------
+function setMsg(text, ok) { const m = $("officerMsg"); m.textContent = text; m.className = "msg " + (ok ? "ok" : "bad"); }
+
+async function scanFace() {
+  const video = $("video");
+  if (!camOn) {
+    video.hidden = false;
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: {} });
+    await new Promise(r => video.addEventListener("playing", r, { once: true }));
+    await new Promise(r => setTimeout(r, 700));
+    camOn = true;
   }
-  setInterval(drawRain, 60);
-
-  const uploadForm = document.getElementById("uploadForm");
-  const verifyForm = document.getElementById("verifyForm");
-
-  uploadForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const file = document.getElementById("evidenceFile").files[0];
-    const description = document.getElementById("description").value;
-    const formData = new FormData();
-    formData.append("evidenceFile", file);
-    formData.append("description", description);
-
-    document.getElementById("uploadResult").innerHTML = "⏳ Writing to blockchain...";
-
-    try {
-      const res = await fetch("/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (data.success) {
-        document.getElementById("uploadResult").innerHTML =
-          `<div class="result verified">✅ REGISTERED ON CHAIN<br>Hash: ${data.fileHash}<br>Tx: ${data.txHash}</div>`;
-        loadEvidence();
-      } else {
-        document.getElementById("uploadResult").innerHTML = `<div class="result tampered">❌ ${data.error}</div>`;
-      }
-    } catch (err) {
-      document.getElementById("uploadResult").innerHTML = `<div class="result tampered">❌ ${err.message}</div>`;
-    }
-  });
-
-  verifyForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const file = document.getElementById("verifyFile").files[0];
-    const formData = new FormData();
-    formData.append("verifyFile", file);
-
-    document.getElementById("verifyResult").innerHTML = "🔍 Scanning against blockchain...";
-
-    try {
-      const res = await fetch("/verify", { method: "POST", body: formData });
-      const data = await res.json();
-      if (data.verified) {
-        document.getElementById("verifyResult").innerHTML =
-          `<div class="result verified">✅ VERIFIED — MATCH FOUND ON CHAIN<br>Hash: ${data.fileHash}</div>`;
-      } else {
-        document.getElementById("verifyResult").innerHTML =
-          `<div class="result tampered">⚠️ NO MATCH — FILE TAMPERED OR UNREGISTERED<br>Hash: ${data.fileHash}</div>`;
-      }
-    } catch (err) {
-      document.getElementById("verifyResult").innerHTML = `<div class="result tampered">❌ ${err.message}</div>`;
-    }
-  });
-
-  async function loadEvidence() {
-    const res = await fetch("/evidence");
-    const records = await res.json();
-    const log = document.getElementById("chainLog");
-    document.getElementById("blockCountStatus").textContent = "TOTAL BLOCKS: " + records.length;
-
-    if (records.length === 0) {
-      log.innerHTML = '<div class="empty-log">No blocks loaded yet...</div>';
-      return;
-    }
-
-    log.innerHTML = "";
-    records.forEach((r, idx) => {
-      const date = new Date(r.timestamp * 1000).toLocaleString();
-      log.innerHTML += `
-        <div class="block-node">
-          <div class="block-id">⬡ BLOCK #${r.id}</div>
-          <div><b>File:</b> ${r.fileName}</div>
-          <div><b>Hash:</b> ${r.fileHash}</div>
-          <div><b>Description:</b> ${r.description || "—"}</div>
-          <div><b>Uploaded By:</b> ${r.uploadedBy}</div>
-          <div><b>Timestamp:</b> ${date}</div>
-        </div>`;
-      if (idx < records.length - 1) {
-        log.innerHTML += `<div class="chain-link"></div>`;
-      }
-    });
+  if (!modelsOn) {
+    const URL = "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights";
+    await Promise.all([faceapi.nets.tinyFaceDetector, faceapi.nets.faceLandmark68Net, faceapi.nets.faceRecognitionNet].map(n => n.loadFromUri(URL)));
+    modelsOn = true;
   }
+  const d = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+  return d ? Array.from(d.descriptor) : null;
+}
 
+function stopCam() {
+  const v = $("video");
+  if (v.srcObject) v.srcObject.getTracks().forEach(t => t.stop());
+  v.srcObject = null; v.hidden = true; camOn = false;
+}
+
+function lock(msg) {
+  token = null; stopCam();
+  $("unlockBtn").hidden = false; $("lockBtn").hidden = true;
+  setMsg(msg || "Locked. Status/court actions are disabled.", false);
+  renderChain();
+}
+
+$("unlockBtn").onclick = async () => {
+  setMsg("Scanning…", true);
+  try {
+    const descriptor = await scanFace();
+    if (!descriptor) return setMsg("No face detected. Try better lighting.", false);
+    const r = await post("/officerFace", { descriptor });
+    if (!r.success) return setMsg(r.error || "Face mismatch. Access denied.", false);
+    token = r.token; stopCam();
+    $("unlockBtn").hidden = true; $("lockBtn").hidden = false;
+    setMsg("Unlocked. Status/court actions are enabled.", true);
+    renderChain();
+  } catch (err) { setMsg(err.message, false); }
+};
+$("lockBtn").onclick = () => lock();
+
+$("enrollBtn").onclick = async () => {
+  setMsg("Scanning for enrollment…", true);
+  try {
+    const descriptor = await scanFace();
+    if (!descriptor) return setMsg("No face detected. Try better lighting.", false);
+    const r = await post("/enrollFace", { descriptor }, { "x-admin-key": $("adminKey").value });
+    if (!r.success) return setMsg(r.error || "Enrollment refused.", false);
+    $("setup").hidden = true; stopCam();
+    setMsg("Officer face enrolled. Unlock to continue.", true);
+  } catch (err) { setMsg("Enrollment error: " + err.message, false); }
+};
+
+async function checkEnrollment() {
+  try { const r = await fetch("/officerFace").then(x => x.json()); $("setup").hidden = !!r.enrolled; } catch {}
+}
+
+// ---------- BLOCK 1: Cases (open to everyone) ----------
+async function loadCases() {
+  try { cases = await api("/cases"); } catch { cases = []; }
+  const opts = cases.map(c => `<option value="${esc(c.caseId)}">#${esc(c.caseId)} – ${esc(c.caseTitle)}</option>`).join("");
+  $("caseSel").innerHTML = '<option value="">Choose a case</option>' + opts;
+  $("caseFilter").innerHTML = '<option value="">All cases</option>' + opts;
+  $("sCases").textContent = cases.length;
+  $("caseList").innerHTML = cases.length
+    ? cases.map(c => `<li><b>#${esc(c.caseId)} – ${esc(c.caseTitle)}</b>${esc(c.evidenceCount)} evidence item(s)</li>`).join("")
+    : "<li>No cases yet. Create one above.</li>";
+}
+
+$("addCaseBtn").onclick = async () => {
+  const title = $("caseTitle").value.trim();
+  if (!title) { $("caseMsg").className = "msg bad"; $("caseMsg").textContent = "Enter a case title first."; return; }
+  const r = await post("/createCase", { caseTitle: title });
+  $("caseMsg").className = "msg " + (r.success ? "ok" : "bad");
+  $("caseMsg").textContent = r.success ? `Case #${r.caseId} created.` : (r.error || "Could not create case.");
+  if (r.success) { $("caseTitle").value = ""; loadCases(); }
+};
+
+// ---------- BLOCK 2 & 3: Upload / Verify ----------
+$("uploadForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const fd = new FormData();
+  fd.append("evidenceFile", $("evidenceFile").files[0]);
+  fd.append("description", $("description").value);
+  fd.append("caseId", $("caseSel").value);
+  const out = $("uploadResult");
+  out.innerHTML = '<p class="mute">Writing to blockchain…</p>';
+  try {
+    const d = await api("/upload", { method: "POST", body: fd });
+    out.innerHTML = d.success
+      ? `<div class="result ok">Registered on chain.<br>Hash: ${esc(d.fileHash)}<br>Tx: ${esc(d.txHash)}</div>`
+      : `<div class="result bad">${esc(d.error)}</div>`;
+    if (d.success) loadEvidence();
+  } catch (err) { out.innerHTML = `<div class="result bad">${esc(err.message)}</div>`; }
+});
+
+$("verifyForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const fd = new FormData();
+  fd.append("verifyFile", $("verifyFile").files[0]);
+  const out = $("verifyResult");
+  out.innerHTML = '<p class="mute">Checking…</p>';
+  try {
+    const d = await api("/verify", { method: "POST", body: fd });
+    out.innerHTML = d.verified
+      ? `<div class="result ok">Verified. This file matches a block on the chain.<br>Hash: ${esc(d.fileHash)}</div>`
+      : `<div class="result bad">No match. The file was changed or never registered.<br>Hash: ${esc(d.fileHash)}</div>`;
+  } catch (err) { out.innerHTML = `<div class="result bad">${esc(err.message)}</div>`; }
+});
+
+// ---------- Evidence chain log ----------
+const caseName = id => { const c = cases.find(c => String(c.caseId) === String(id)); return c ? `#${c.caseId} – ${c.caseTitle}` : "Unknown case"; };
+
+async function loadEvidence() {
+  const f = $("caseFilter").value;
+  const url = f ? `/evidence?caseId=${f}` : "/evidence";
+  try { records = await api(url); } catch { records = []; }
+  $("sBlocks").textContent = records.length;
+  renderChain();
+}
+
+function renderChain() {
+  const log = $("chainLog");
+  if (!records.length) { log.innerHTML = '<p class="mute">No evidence yet. Upload a file to create the first block.</p>'; return; }
+  log.innerHTML = records.map(r => {
+    const officer = token ? `
+      <select class="st" data-id="${esc(r.id)}" aria-label="Status">${STATUSES.map(s => `<option${s === r.status ? " selected" : ""}>${s}</option>`).join("")}</select>
+      <button class="ghost" data-act="status" data-id="${esc(r.id)}">Update status</button>
+      <input class="courtTier" data-id="${esc(r.id)}" placeholder="Court tier e.g. District" style="width:140px">
+      <input class="courtOutcome" data-id="${esc(r.id)}" placeholder="Outcome" style="width:160px">
+      <button class="ghost" data-act="certify" data-id="${esc(r.id)}">Certify by court</button>` : "";
+    const clogHtml = (r.custodyLog || []).length
+      ? r.custodyLog.map(c => `<p><b>${esc(c.action)}</b> by ${esc(c.actor)}<br><span class="mute">${esc(new Date(c.timestamp * 1000).toLocaleString())}</span></p>`).join("")
+      : '<p class="mute">No custody events recorded.</p>';
+    return `
+    <div class="blk">
+      <h3>Block #${esc(r.id)} <span class="chip${r.status === "CourtCertified" ? " cert" : ""}">${esc(r.status)}</span></h3>
+      <div class="f"><b>File:</b> ${esc(r.fileName)}</div>
+      <div class="f"><b>Case:</b> ${esc(caseName(r.caseId))}</div>
+      <div class="f"><b>Hash:</b> <span class="hash">${esc(r.fileHash)}</span></div>
+      <div class="f"><b>Description:</b> ${esc(r.description) || "–"}</div>
+      <div class="f"><b>Uploaded by:</b> ${esc(r.uploadedBy)}</div>
+      <div class="f"><b>Time:</b> ${esc(new Date(r.timestamp * 1000).toLocaleString())}</div>
+      <div class="qr"><img src="/qr/${esc(r.id)}" alt="QR code for evidence ${esc(r.id)}"></div>
+      <div class="acts">
+        <a class="ghost" style="width:auto;display:inline-block;padding:10px 14px;text-decoration:none;border-radius:14px;border:1px solid var(--pri);color:var(--pri)" href="/report/${esc(r.caseId)}" target="_blank">Download case PDF report</a>
+        ${officer}
+      </div>
+      <details><summary>Custody log (${(r.custodyLog||[]).length})</summary><div class="clog">${clogHtml}</div></details>
+    </div>`;
+  }).join("");
+}
+
+$("chainLog").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-act]"); if (!b) return;
+  const id = b.dataset.id, act = b.dataset.act;
+  if (act === "status") {
+    const status = document.querySelector(`select.st[data-id="${id}"]`).value;
+    const r = await post("/updateStatus", { evidenceId: id, status });
+    return r.success ? loadEvidence() : alert("Error: " + r.error);
+  }
+  if (act === "certify") {
+    const courtTier = document.querySelector(`.courtTier[data-id="${id}"]`).value.trim();
+    const outcome = document.querySelector(`.courtOutcome[data-id="${id}"]`).value.trim();
+    if (!courtTier || !outcome) return alert("Enter both court tier and outcome.");
+    const r = await post("/certifyCourt", { evidenceId: id, courtTier, outcome });
+    return r.success ? loadEvidence() : alert("Error: " + r.error);
+  }
+});
+
+$("caseFilter").onchange = loadEvidence;
+$("refreshBtn").onclick = () => { loadCases().then(loadEvidence); };
+
+window.addEventListener("DOMContentLoaded", async () => {
+  checkEnrollment();
+  await loadCases();
   loadEvidence();
+});
 </script>
-
 </body>
 </html>

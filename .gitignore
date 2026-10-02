@@ -1,1 +1,4 @@
 node_modules
+officer-face.json
+uploads/*
+!uploads/.gitkeep
